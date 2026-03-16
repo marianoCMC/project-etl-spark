@@ -1,0 +1,28 @@
+# Datos crudos (no subir al repo — pueden ser grandes)
+data/raw/
+data/processed/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Variables de entorno
+.env
+
+# IDEs
+.vscode/
+.idea/
+
+# Docker volumes
+postgres_data/
+
+# Parquet outputs
+*.parquet
+*.snappy.parquet

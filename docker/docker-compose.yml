@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+
+  postgres:
+    image: postgres:15
+    container_name: etl_postgres
+    environment:
+      POSTGRES_USER: etl_user
+      POSTGRES_PASSWORD: etl_pass
+      POSTGRES_DB: etl_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - etl_network
+
+  spark-master:
+    build: ./spark
+    container_name: spark_master
+    environment:
+      - SPARK_MODE=master
+      - SPARK_MASTER_HOST=spark-master
+    ports:
+      - "8080:8080"   # Spark Web UI
+      - "7077:7077"   # Spark master port
+    volumes:
+      - ../:/app       # monta la raíz del proyecto en /app
+    networks:
+      - etl_network
+
+  spark-worker:
+    build: ./spark
+    container_name: spark_worker
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=2G
+      - SPARK_WORKER_CORES=2
+    depends_on:
+      - spark-master
+    volumes:
+      - ../:/app
+    networks:
+      - etl_network
+
+volumes:
+  postgres_data:
+
+networks:
+  etl_network:
+    driver: bridge
