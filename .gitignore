@@ -26,3 +26,6 @@ postgres_data/
 # Parquet outputs
 *.parquet
 *.snappy.parquet
+
+# Spark runtime
+java_opts.txt

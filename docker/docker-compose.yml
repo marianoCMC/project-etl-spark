@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
 
   postgres:
@@ -20,9 +18,7 @@ services:
   spark-master:
     build: ./spark
     container_name: spark_master
-    environment:
-      - SPARK_MODE=master
-      - SPARK_MASTER_HOST=spark-master
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
     ports:
       - "8080:8080"   # Spark Web UI
       - "7077:7077"   # Spark master port
@@ -34,10 +30,9 @@ services:
   spark-worker:
     build: ./spark
     container_name: spark_worker
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark-master:7077
-      - SPARK_WORKER_MEMORY=2G
+      - SPARK_WORKER_MEMORY=2g
       - SPARK_WORKER_CORES=2
     depends_on:
       - spark-master
