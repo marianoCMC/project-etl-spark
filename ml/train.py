@@ -36,6 +36,7 @@ JDBC_PROPS = {
 }
 
 OUTPUT_PATH = "/app/data/processed/customer_segments"
+MODEL_PATH = "/app/ml/models/kmeans_customer_segmentation"
 K = 4    # número de segmentos
 SEED = 42
 
@@ -166,6 +167,10 @@ output.write.jdbc(
 # Parquet
 print("Guardando customer_segments en Parquet...")
 output.coalesce(1).write.mode("overwrite").parquet(OUTPUT_PATH)
+
+# Modelo entrenado (necesario para predict.py)
+print("Guardando modelo en disco...")
+model.save(MODEL_PATH)
 
 print(f"\n  ✓ {output.count()} clientes segmentados y guardados")
 print("\n=== ML completado ===\n")
