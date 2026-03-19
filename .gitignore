@@ -29,3 +29,6 @@ postgres_data/
 
 # Spark runtime
 java_opts.txt
+
+# Modelos ML entrenados (binarios grandes)
+ml/models/
