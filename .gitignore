@@ -32,3 +32,6 @@ java_opts.txt
 
 # Modelos ML entrenados (binarios grandes)
 ml/models/
+
+# Airflow
+airflow/logs/

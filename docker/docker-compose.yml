@@ -41,8 +41,33 @@ services:
     networks:
       - etl_network
 
+  airflow:
+    build: ./airflow
+    container_name: airflow
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__WEBSERVER__SECRET_KEY=olist_secret_key
+      - _AIRFLOW_DB_UPGRADE=true
+      - _AIRFLOW_WWW_USER_CREATE=true
+      - _AIRFLOW_WWW_USER_USERNAME=admin
+      - _AIRFLOW_WWW_USER_PASSWORD=admin
+    volumes:
+      - ../airflow/dags:/opt/airflow/dags
+      - airflow_logs:/opt/airflow/logs
+      - /var/run/docker.sock:/var/run/docker.sock  # permite ejecutar docker exec
+    ports:
+      - "8081:8080"   # Airflow Web UI
+    depends_on:
+      - spark-master
+      - postgres
+    networks:
+      - etl_network
+    command: standalone
+
 volumes:
   postgres_data:
+  airflow_logs:
 
 networks:
   etl_network:
