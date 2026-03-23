@@ -170,7 +170,7 @@ output.coalesce(1).write.mode("overwrite").parquet(OUTPUT_PATH)
 
 # Modelo entrenado (necesario para predict.py)
 print("Guardando modelo en disco...")
-model.save(MODEL_PATH)
+model.write().overwrite().save(MODEL_PATH)
 
 print(f"\n  ✓ {output.count()} clientes segmentados y guardados")
 print("\n=== ML completado ===\n")

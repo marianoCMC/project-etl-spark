@@ -2,12 +2,20 @@ FROM apache/airflow:2.9.0
 
 USER root
 
-# Docker CLI — necesario para que BashOperator pueda ejecutar
-# "docker exec spark_master spark-submit ..." desde dentro de Airflow
+# Instalar Docker CLI desde el repositorio oficial de Docker
+# (el paquete docker.io de apt es demasiado antiguo — API 1.41 vs 1.44 requerida)
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends docker.io && \
+    apt-get install -y ca-certificates curl && \
+    install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc && \
+    chmod a+r /etc/apt/keyrings/docker.asc && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+      | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    apt-get update && \
+    apt-get install -y docker-ce-cli && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
+    groupadd docker && \
     usermod -aG docker airflow
 
 USER airflow
